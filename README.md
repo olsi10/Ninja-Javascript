@@ -1,7 +1,7 @@
 <div align = "center">
 
 # Ninja-Javascript
-닌자가 되기 위한 레포 ५✍⋆*
+닌자 수련 2022.07.02 시작
 
 |JavaScript Ninja|
 |:--:|
