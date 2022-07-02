@@ -145,3 +145,5 @@ console.log(rest.mbti);
 console.log(rest.chool);
 
 //자료구조와 자료형 3 끝!!!!
+
+//master 브랜치 삭제 푸시 안되는 오류
