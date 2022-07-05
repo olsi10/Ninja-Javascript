@@ -1,7 +1,7 @@
 <div align = "center">
 
 # Ninja-Javascript
-닌자 수련 2022.07.02 시작
+닌자 수련은 시험이 끝나고 시작하겠소.
 
 |JavaScript Ninja|
 |:--:|
