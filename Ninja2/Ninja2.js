@@ -83,3 +83,37 @@ today.setFullYear(2022, [0], [1]);
 console.log(today); //2022 1얼 1일
 
 today.setFullYear
+
+let dec = new Date(-48 * 3600 * 1000)
+console.log(dec) //1970 1월 1일 이틀전
+
+let dd = new Date("2018; 01; 25")
+console.log(dd)
+
+//-, , , .
+
+let today9 = new Date();
+
+today9.setHours(0); //시만 0으로 변경
+console.log(today9);
+
+today9.setMinutes(30);
+today9.setFullYear(2005, 2, 4)
+
+console.log(today9)
+
+let start = new Date();
+
+for (let i = 0; i < 100000; i++) {
+    let doSomething = i * i * i;
+}
+
+let end = new Date()
+
+console.log(`작업 완료까지 ${end - start} 밀리초 걸렸습니다.`)
+
+let ms1 = Date.parse('2012-01-25T11:51:50.417-07:00');
+console.log(ms1);
+
+let date12 = new Date( Date.parse('2012-01-26T13:51:50.417-07:00') );
+console.log(date12);
