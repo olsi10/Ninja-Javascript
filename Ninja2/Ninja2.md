@@ -373,3 +373,356 @@ personCopy2.address.city = 'Tokyo';
 console.log(personCopy2.address.city); //Tokyo
 console.log(person.address.city); //New York
 ```
+
+---
+
+<br />
+
+# 변수의 유효범위와 클로저 \*\*
+
+- 자바스크립트는 객체 지향 언어면서 동시에 함수 지향 언어의 특징을 가짐
+- 함수 동적 생성 가능
+- 생성한 함수를 값처럼 다른 함수의 인수로 넘길 수 있으며, 함수가 생성된 곳에서도 함수 호출 가능<br />(함수에서 반환한 함수를 호출 가능 => 클로저)
+- 요약 -> 함수를 일급 객체로 취급
+
+<br />
+
+## 코드 블록
+
+- 중괄호 코드 블록으로 진입하며 새로운 접근 범위 (scope) 생성, 접근 범위 안에서 선언한 변수는 **블록 안에서만 사용 가능**
+- 접근 범위 => 변수 저장할 수 있는 일종의 공간 (객체)
+
+<br />
+
+```javascript
+{
+  let msg = "Hello";
+  console.log(msg);
+}
+
+console.loG(msg); //중괄호 밖에서는 접근 불가
+```
+
+<br />
+
+- 다음 예제 코드 결과를 오해하지 않도록!
+
+```javascript
+let msg;
+{
+  //msg를 참조하는 것!
+  msg = "Hello";
+  console.log(msg); //hello
+}
+console.log(msg); //hello
+```
+
+<br />
+
+- 이미 선언된 변수와 동일한 이름을 가진 변수를 별도의 블록 없이 let으로 선언하면 에러
+
+```javascript
+let msg = "안녕하세요";
+console.log(msg);
+
+let msg = "안녕히 가세요"; //에러
+console.log(msg);
+```
+
+<br />
+
+- 다음 코드는 잘 됨!
+
+```javascript
+let msg = "hello";
+{
+  let msg = "hello";
+  console.log(msg);
+}
+
+{
+  let msg = "hello";
+  console.log(msg);
+}
+
+console.log(msg);
+```
+
+<br />
+
+- if, for, while 과 같은 제어문의 중괄호 블록 안에서 선언한 변수는 오직 블록 안에서만 접근 가능.
+- 즉, **중괄호가 생기면 매번 새로운 접근 범위가 생성**
+
+<br />
+
+```javascript
+if (true)
+{
+  let phrase = "안녕하세요";
+  console.log(phrase);
+}
+
+//console.log(phrase); //블록을 벗어나면 접근 불가!!!
+
+//let = i는 블록에 속하는 ''지역변수''
+for (let i = 0; i < 3; i++) {
+  console.log(i);
+}
+
+//console.log(i); //블록을 벗어나면 접근 불가!!!
+```
+
+<br />
+
+## 중첩 함수
+
+- 함수 내부에서 선언한 함수를 중첩 함수라고 함
+- 중첩 함수는 코드를 정돈하는 데 사용 가능<br />즉, 거대한 작업을 하는 큰 함수의 기능을 쪼개서 중첩 함수로 정의 가능
+- 중첩 함수는 거대한 함수가 정의된 함수 내부에서만 접근 가능
+
+<br />
+
+```javascript
+function syaHiBye(f, l)
+{
+  function getFullName() {
+    return f + " " + l;
+  }
+
+  console.log("Helllo, " + getFullName());
+  console.log("Bye, " + getFullName());
+}
+
+sayHiBye("철수", "김");
+
+// getFullName(); //접근 불가
+```
+
+<br />
+
+- 중첩 함수는 함수의 반환값으로 반환될 수 있다. => 즉 **함수에서 함수 반환 가능**
+- 꼭 함수가 아니라도 **익명 함수, 화살표 함수 형태**로 함수 반환 가능
+- 함수 내부에서 생성한 객체 프로퍼티 형태(메서드)로 반환 가능
+
+<br />
+
+```javascript
+function makeObjectwithClosureMethod(value) {
+    let x = 100;
+    let obj = {
+        method(arg) {
+            //메서드 형태지만, 함수와 똑같이 메서드가 정의된 시점의 바깥 환경 기억 가능
+            console.log(value, x, arg);
+        }
+    };
+
+    return arg;
+}
+
+let o = makeOjectwithClosureMethod("Hello");
+o.method("world");
+```
+
+<br />
+
+- 이렇게 반환된 함수는 어디서든 호출해서 사용 가능
+- **반환된 함수가 호출될 때 함수가 참조하고 있는 외부 변수에도 접근 가능(클로저)**
+
+<br />
+
+```javascript
+function makeCounter() {
+    let count = 0;
+
+    return function() {
+        return count ++;
+    };
+}
+
+let counter = makeCounter();
+
+console.log(counter()); //0
+console.log(counter()); //1
+console.log(counter()); //2
+```
+
+<br />
+
+# 클로저
+
+- 클로저 (or 클로저 함수) 정의 => 외부 변수를 기억하고 외부 변수에 접근할 수 있는 함수
+- 자바스크립트에선 모든 함수가 자연스럽게 클로저
+- 클로저 => 함수 + 함수가 참조하는 외부 렉시컬 환경
+- 모든 함수가 생성되는 시점에 외부 렉시컬 환경을 저장하는 **[Enviroment] 생성, 이를 통해 외부 렉시컬 환경을 참조**할 수 있기 때문
+- **외부 변수에 접근 가능**, 그러므로 모든 함수는 클로저의 특성을 지님
+
+<br />
+
+# 클로저란 외부 변수를 기억하고 접근할 수 있는 함수를 말한다
+
+---
+
+<br />
+
+# 가비지 컬렉션
+
+- 기본적으로 함수 호출이 끝나면 함수 호출 스택 정리 과정에서 **함수에 대응하는 렉시컬 환경이 메모리에서 제거**
+- 함수와 관련된 인수, 지역 변수가 이때 삭제
+- 자바스크립트에서 모든 객체는 **도달 가능한 상태일 때만 메모리 유지**하므로 함수 호출 끝나면 관련 변수 참조 불가
+- 만약 함수 반환 과정에서 반환된 **함수가 외부 변수를 참조할 경우 [[Enviroment]]프로퍼티에 외부 렉시컬 환경에 대한 정보가 저장되므로 도달 가능한 상태임.** 때문에 가비지 컬렉션 대상 X
+
+<br />
+
+```javascript
+function f() {
+    let value = 123;
+
+    return function() {
+        console.log(value); //value를 참조하기 때문에 [Enviroment]에 value에 대한 참조 저장
+    }
+}
+//g 변수가 참조를 잃지 않는 동안 g.[Enviroment] 메모리에 value 값 존재
+let g = f();
+
+//null 대입으로 g.[Enviroment]에 도달할 수 없음. 때문에 메모리에서 value값 삭제
+g = null;
+```
+
+
+<br />
+
+
+- 외부 변수를 참조하는 변수를 반환하지 않는 경우
+
+```javascript
+function sum(a, b) {
+    let c = 100;
+    return a + b + c;
+}
+
+let result = sum(1, 2);
+```
+
+<br />
+
+----
+
+# 전역 객체
+
+- 전역 객체를 사용하면 어디서나 사용 가능한 전역 변수나 함수 생성 가능
+- **단, 전역 변수, 함수는 전역적으로 사용하는 경우에만 사용 (잘 없음)**
+- 브라우저 환경에서 전역 객체 => window 각 호스트 환경마다 다를 수 있음
+- alert, prompt, confirm 을 포함한 빌트인 함수는 글로벌 객체 소속 전역함수
+
+<br />
+
+```javascript
+alert("Hello");
+//위 아래 코드 모두 동일하게 동작
+window.alert("Hello");
+```
+
+<br />
+
+- 중요한 변수 또는 함수라서 모든 곳에 사용할 수 있게 하려면 아래와 같이 **명시적으로 전역 객체에 직접 프로퍼티 추가**
+
+```javascript
+//몯느 스크립트에서 currentUser를 사용할 수 있도록 
+window.currentUser = {
+  name : "John"
+};
+
+//이처럼 모든 스크립트에서 currentUser에 접근 가능
+alert(currentUser.name); //John
+
+//지역 변수 currentUser가 있다면 지역 변수와 충돌없이 전역 객체 windoow에서 이를 명시적으로 가져올 수 있음
+alert(window.currentUser.name); //John
+```
+
+<br />
+
+- 전역 함수는 몰라도 전역 객체는 되도록이면 사용 X
+- 가급적 함수 만들 땐 외부 변수나 전역 변수를 함수 내부에서 사용하기 보단 **전달받은 입력값만을 활용해서 값을 반환해야 테스트, 재사용이 쉬움**
+
+<br />
+
+# setTimeOut, setInterval 호출 스케줄링
+
+- 호출 스케줄링 => 일정 시간이 지난 후 원하는 함수를 예약 실행할 수 있게 하는 것
+- 호출 스케줄링 구현법<br />setTimeout, setInterval 함수 사용
+
+<br />
+
+## setTimeOut
+
+- 일정 시간이 지난 후 함수 실행할 때 사용
+
+```javascript
+let timeId = setTimeout(func|code, [delay], [arg1], [ars2], ...)
+```
+
+<br />
+
+- func => 함수
+- delay => ms 단위 대기 시간
+- arg1, arg2, ... => 추가 가변 인수
+
+<br />
+
+```javascript
+function sayHi() {
+  console.log("안녕하세요");
+}
+
+setTimeout(sayHi, 1000);
+```
+
+<br />
+
+- setTimeOut에 가변 인수 전달 가능
+- 해당 가변 인수들이 호출될 때 함수 인수값으로 전달됨
+
+```javascript
+function sayHi(who, phrase) {
+  console.log(who + "님, " + phrase);
+}
+
+//1초 뒤
+setTimeout(sayHi, 1000, "홀길동", "안녕하세요");
+
+//다른 방식, 익명 함수 전달 가능
+setTimeout(function () {
+  sayHi("홍길동", "안녕하세요");
+}, 1000);
+```
+
+<br />
+
+- setTimeout을 호출하면 타이머 식별자 반환
+- clearTimeout 함수에 반환받은 식별자 전달하여 스케줄링 취소 가능
+
+<br />
+
+```javascript
+let timeId = setTimeout(...);
+
+clear(timeId);
+```
+
+<br />
+
+## setInterval
+
+- 일정 시간 간격을 두고 함수 실행할 때 사용
+- setTimeout이 단 한 번 실행하는 것과 달리 setInterval은 주기적 실행
+- setInterval 메소드는 setTimeout과 동일한 문법 (함수 호출 인자가 같음)
+- 함수 호출을 중단하려면 clearInterval 사용
+
+<br />
+
+```javascript
+let timeId = setInterval(() => console.log("째깍"), 2000); //2초
+setTimeout(() => {
+  cleartInterval(timeId);
+}, 6000);
+```

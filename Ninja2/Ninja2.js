@@ -147,7 +147,7 @@ function showName() {
     // 1, Bora, undefined가 출력됨(두 번째 인수는 없음)
     console.log("Bora");
 
-    
+
 function f() {
     // 화살표 함수 바깥의 함수(f)의 arguments를 참조 (자체 arguments를 가지지 않음)
     let showArg = () => console.log(arguments); // [1, "Hello"]
@@ -167,3 +167,63 @@ function g() {
     }
     f(1, "Hello");
     
+
+    let msg;
+    {
+        //msg를 참조하는 것!
+        msg = 'Hello';
+        console.log(msg);
+    }
+    console.log(msg);
+
+function makeObjectwithClosureMethod(value) {
+    let x = 100;
+    let obj = {
+        method(arg) {
+            //메서드 형태지만, 함수와 똑같이 메서드가 정의된 시점의 바깥 환경 기억 가능
+            console.log(value, x, arg);
+        }
+    };
+
+    return obj;
+}
+
+let o = makeObjectwithClosureMethod("Hello");
+o.method("world");
+
+//위 코드 활용
+
+// function make(value) {
+//     let x = "Hi!"
+//     let obj = {
+//         bye(arg) {
+//             console.log(value, x, arg);
+//         }
+//     };
+
+//     return obj;
+// }
+
+// let m = make("Hi!!!!!!");
+// m.bye("뿡");
+
+//이해가 잘 안돼서 한 번 더... 활용
+
+function makeShool(SchoolName) {
+    let level = "high";
+    let region = {
+        adr(rh) {
+            console.log(rh, level, SchoolName);
+        }
+    };
+
+    return region;
+}
+
+let ms = makeShool("Mirim");
+ms.adr("Seoul");
+
+let timeId = setInterval(() => console.log("째깍"), 2000); //2초
+setTimeout(() => {
+  cleartInterval(timeId);
+}, 60000);
