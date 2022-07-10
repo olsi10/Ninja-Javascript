@@ -726,3 +726,171 @@ setTimeout(() => {
   cleartInterval(timeId);
 }, 6000);
 ```
+
+---
+
+<br />
+
+# call / apply
+
+<br />
+
+## call
+
+- call 메서드
+- 함수나 메소드 객체에는 call 메서드 제공
+- 함수(메소드) 호출 과정에서 this 값 지정하여 호출하고 싶을 때 사용
+- call(this, ...args)<br />첫 번째 인자값으로 this로 사용할 값을, 그 뒤에는 가변 인자 형태로 함수, 메서드 전달할 함수 인자 제공 가능
+
+<br />
+
+```javascript
+function printThis() {
+  console.log(this);
+}
+
+let person = {name : "John", age : 20};
+let dog = {name : "Sam", age : 5};
+
+printThis.call(person); //printThis 함수를 호출하되, this값을 person 객체로 지정
+printThis.call(dog); //호출하되, this값을 dog 객체로 지정
+
+function printName(prefix, thimes = 1) {
+  console.log(this);
+  for (let i = 0 ; i < times; i++) {
+    console.log(prefix, this.name);
+  }
+}
+
+
+//printName로 함수 호출하되, this값을 person 객체로 지정하며 prefix 값으로 "Hello", times를 2로 전달
+printName.call(person, "Hello", 2);
+printName.call(dog, "Good!");
+```
+
+<br />
+
+## apply
+
+- call과 비슷한 용도로 사용하지만 **메서드에 인자를 전달하는 방식에 차이**
+- apply(this, args)<br />args 값은 함수 호출 시 전달할 인자값이 담긴 배열
+
+<br />
+
+```javascript
+function printThis() {
+  console.log(this);
+}
+
+let person = {name : "John", age : 20};
+let dog = {name : "Sam", age ; 5};
+
+//단순히 this 값 지정이라면 call과 동일함
+printThis.apply(person);
+printThis.apply(dog);
+
+function printName(prefix, times = 1) {
+  console.log(this);
+  for( let i = 0; i < times; i++) {
+    console.log(prefix, this.name);
+  }
+}
+
+//인자를 전달할 때 가변 인자가 아닌 인자값이 담긴 "배열" 전달
+printName.apply(perseon, ["Hello", 2]);
+printName.apply(dog, ["Good"]);
+
+//굳이 배열을 전달하면서 call을 써야한다면 전개 연산자를 써서 배열을 가변인자로 바꿔서 전달!!!
+printName.call(person, ...["Hello", 2]);
+```
+
+<br />
+
+---
+
+<br />
+
+
+# 함수 바인팅
+
+- 객체 메서드가 객체 내부가 아닌 다른 곳에 전달되어 호출되면 this값 사라지는 현상 발생
+
+```javascript
+let user = {
+  fn : "John",
+  sayHi() {
+    console.log(`Hello, ${this.fn}!`);
+  }
+};
+
+//Hello, John!
+user.sayHi();
+
+//Hello, undefined //객체 내부가 아닌 다른 곳에 전달되어 호출되면 this값 사라짐
+setTimeout(user.sayHi(), 1000);
+```
+
+<br />
+
+- 메서드 전달시 this값 유지하는 법
+
+## 1. 래퍼
+
+```javascript
+let user = {
+  fn : "john",
+  sayHi() {
+    console.log(`Hi!, ${this.fn}!`);
+  }
+};
+
+serTimeout(function() {
+  //주체 (user)가 있는 상태에서 출력 (this 보존)
+  user.sayHi();
+}, 1000);
+```
+
+<br />
+
+## 2. bin
+
+- 모든 함수는 this를 수정(바인딩)하게 해주는 내장 메서드 bind 제공
+- **func.bind(context)는 함수처럼 호출 가능한 특수 객체 반환**
+- 객체를 호출하면 this가 context로 고정된 함수 func 반환
+
+```javascript
+let user = {fn : "John"};
+
+function func() {
+  console.log(this.fn);
+}
+
+//func.bind(user)는 func의 this를 user로 바인딩한 변형된 함수
+let funcUser = func.bind(user);
+
+funcUser(); //John
+```
+
+<br />
+
+- 객체의 메소드에 bind 적용
+
+```javascript
+let user = {
+  fn : "John",
+  sayHi() {
+    console.log(`Hello! ${this.fn}`);
+  }
+};
+
+let sayHi() = user.sayHi.bind(user);
+console.log(sayHi === user.sayHi); //False
+
+sayHi(); //Hello, John
+
+setTimeout(sayHi, 1000);
+user = {sayHi() {
+  console.log("또 다른 사용자");
+}
+};
+```

@@ -227,3 +227,50 @@ let timeId = setInterval(() => console.log("째깍"), 2000); //2초
 setTimeout(() => {
   cleartInterval(timeId);
 }, 60000);
+
+function printThis() {
+    console.log(this);
+  }
+  
+  let person = {name : "John", age : 20};
+  let dog = {name : "Sam", age : 5};
+  
+  printThis.call(person); //printThis 함수를 호출하되, this값을 person 객체로 지정
+  printThis.call(dog); //호출하되, this값을 dog 객체로 지정
+  
+  function printName(prefix, times = 1) {
+    console.log(this);
+    for (let i = 0 ; i < times; i++) {
+      console.log(prefix, this.name);
+    }
+  }
+  
+  
+  //printName로 함수 호출하되, this값을 person 객체로 지정하며 prefix 값으로 "Hello", times를 2로 전달
+  printName.call(person, "Hello", 2);
+  printName.call(dog, "Good!");
+
+
+
+
+  let user = {
+    fn : "John",
+    sayHi() {
+      console.log(`Hello! ${this.fn}`);
+    }
+  };
+  
+  let sayHi = user.sayHi.bind(user);
+  //sayHi에 저장된 함수는 user.sayHi가 아닌 완전히 새로운 this가 user로 고정된 함수!!
+  console.log(sayHi === user.sayHi); // 참조가 같지 않으니 False
+  
+  sayHi(); //Hello, John this 값 기억
+  
+  //1초 이내 user 값이 변화해도 sayHi는 기존값 사용
+  setTimeout(sayHi, 1000);
+  user = {sayHi() {
+    console.log("또 다른 사용자");
+  }
+  };
+
+  
