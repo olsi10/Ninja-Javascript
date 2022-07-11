@@ -11,7 +11,17 @@
 </body>
 
 <script>
-    console.log(this); //window
-    console.log(window); //window
+    // console.log(this); //window
+    // console.log(window); //window
+
+    let person = { name: "John" };
+    person.makeSayHelloTo = function(to) {
+        return function() {
+        console.log(this.name, 'say hello to', to);
+        }
+    }
+    
+    let johnSayHelloToSally = person.makeSayHelloTo('Sally');
+    johnSayHelloToSally();
 </script>
 </html>

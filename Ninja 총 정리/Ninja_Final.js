@@ -373,6 +373,7 @@ this = undefined
 arguments = [100, 200]
 x = 100
 y = 200
+double = f //aAd 함수 실행 컨텍스트의 생성 시점에 double을 위한 저장 공간 확보 및 함수 저장
 
 d 함수
 arguments = [300]
@@ -424,3 +425,168 @@ makeAdder 클로저 컨텍스트
     this = undefined
     x = 1
 */
+
+// Q1) johnSayHelloToSally가 호출되는 시점의 실행 환경 컨텍스트 분석해보기
+
+// let person = {name : "John"};
+// person.makeSayToHello = function(to) {
+//     let name = this.name();
+//     return function() {
+//         console.log(name, 'say hello to', to);
+//     }
+// }
+// let jonSayHelloToSally = person.makeSayToHello('Sally');
+// jonSayHelloToSally();
+
+/*
+전역
+global = window
+this = window
+person = {name : John, makeSayYoHello = f};
+jonSayHellotoSally = f
+
+jonSayHellotoSally 클로저 컨텍스트
+arguments = [Sally]
+this = person //person.makeSayHelloTo <- . 앞을 참조함! 
+name : John
+to = Sally
+
+익명 함수 클로저 컨텍스트
+arguments = [0]
+this = undefined
+*/
+
+
+
+
+
+//나머지 매개변수와 전개 문법
+
+
+//나머지 매개변수
+//함수에 넘겨주는 인수에 제약이 없다.
+
+// function ss(a, b) {
+//     return a + b;
+// }
+
+// console.log(ss(1,2,3,4,5,6)); //a, b에 해당하는 1, 2만 사용
+
+//함수 정의할 때 받을 인수 개수보다 더 많이 전달해도 에러 X
+//단 반환값은 처음 두 개 인수해서 계산
+
+//가변 인자를 전달받기 위해선 값들을 전달받을 배열 ... 연산자 사용
+//... => 나머지들을 모아서 배열에 넣어라
+
+
+function sumAll(...args) {
+    console.log(Array.isArray(args)); //true
+    let sum = 0;
+    for (let arg of args) {
+        sum += arg;
+    }
+    return sum;
+}
+console.log(sumAll(1)); // [1] = 1
+console.log(sumAll(1, 2)); //[1, 2] = 3
+console.log(sumAll(1, 2, 3)); //[1, 2, 3] = 6
+
+//앞부븐은 매개변수는 변수, 뒤는 배열로 받을 수도 있다
+//단!!!!! 가변 인자를 받을 배열은 맨 마지막에 정의.
+
+function showName(firstName, lastName, ...Name) {
+    console.log(firstName + ' ' + lastName);
+
+    console.log(Name[0]); //young
+    console.log(Name[1]); //Julius
+    console.log(Name.length); //3
+}
+
+showName("Choi", "yun", "young", "Julius", "John");
+
+//arguments 변수
+//특별한 유사 배열 객체를 쓰면 인덱스를 사용해 전달받은 모든 인수에 접근 가능!!
+//arguments 함수 호출 시점에 함수 내부에 접근할 수 있는 특수한 객체
+//(함수 호출시 함수 실행 컨텍스트 생성 단계에서 만들어지는 객체)
+
+//이터러블함. 즉 반복 가능한 객체, 순회 가능
+//그러나 유사 배열이기 때문에 배열에서 제공하는 메소드 사용 불가
+
+function sumALL() {
+    //arguments는 배열 X
+    console.log(Array.isArray(arguments)); //false
+    
+    let sum = 0;
+    for (let arg of arguments) {
+        sum += arg;
+    }
+    return sum;
+}
+
+console.log(sumALL(1, 2)); //3
+console.log(sumALL(1, 2, 3)); //6
+
+//나머지 매개변수는 최근에 개정된 문법에서 제공, 그러므로 레거시 코드 분석할 줄 알아야 함
+
+function Name() {
+    console.log(arguments.length);
+    console.log(arguments[0]);
+    console.log(arguments[1]);
+
+    // for(let arg of arguments) {
+    //     console.log(arg);
+    // }
+}
+
+Name("Choiii", "yunnn"); //2, Choi yun
+
+Name("Choiii"); //1, Choi undefined
+
+//화살표 함수는 this를 갖지도 않고 바깥 환경에서 가져오는 것과 같이 화살표 함수는 자체 arguments도 갖지 않음
+
+// function ff() {
+//     //화살표 함수 바깥 ff의 함수 arguments를 참조
+//     let showArg = () => console.log(arguments);
+//     showArg(); //1, Worlds
+    
+//     let another = () => console.log(arguments);
+//     another(2, "World"); //1, World
+
+//     function gg() {
+//         //화살표 함수 바깥 g의 arguments 참조
+//         let showArg = () => console.log(arguments);
+//         showArg(); //2, World
+        
+//         let another = () => console.log(arguments);
+//         animal(2, "World"); //2, World
+//     }
+//     gg(2, "World");
+// }
+// ff(1, "Hello");
+
+
+//spread 문법
+//배열을 가변 인자를 받는 함수에 전달 가능
+//점 세 개를쓰기 때문에 나머지 매개변수와 비슷해보이지만. 반대역할을 함
+//나머지는 한데 모았다면 스프레드는 흩뿌림
+
+console.log(Math.max(3, 5, 1)); //5
+
+let arrr = [3, 5, 1];
+console.log(Math.max(arrr)); //배열 값은 전달 불가.
+console.log(Math.max(...arrr)); //5
+
+let arrr1 = [1, -2];
+let arrr2 = [8, -8];
+
+console.log(Math.max(...arrr1, ...arrr2)); //8
+
+//배열 합칠 때도 전개 문법 사용 가능
+
+let arrr3 = ["Hello", 1234];
+let arrr4 = [5678, "World"];
+
+let merged = [1, ...arrr3, 2, ...arrr4];
+
+console.log(merged); //1, Hello, 1234, 2, 5678, World
+
