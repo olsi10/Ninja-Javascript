@@ -254,7 +254,7 @@ script 내부는 비었지만 어쨌든 전역 실행 컨텍스트가 생성되�
 */
 
 console.log(this);
-console.log(window);
+// console.log(window);
 
 //실행 컨텍스트의 경우 항상 두 가지 단계를 거침
 // 생성 단계
@@ -265,7 +265,7 @@ console.log(window);
 var aa = 100;
 let bb = 200;
 
-function f() {
+function f1() {
     console.log('hello');
 }
 aa = 300;
@@ -290,7 +290,7 @@ function add(x, y) {
     console.log(arguments);
     return x + y;
 }
-let reuslt = add(a, b);
+let reuslt = add(aaa, bbb);
 
 /* 생성 컨텍스트
 aaa = undefined
@@ -322,7 +322,7 @@ function addAndDouble(x, y) {
 function double(x) {
     return 2 * x;
 }
-let reuslt1 = addAndDouble(a, b);
+let reuslt1 = addAndDouble(aaaa, bbbb);
 
 /*
 global = window
@@ -332,4 +332,95 @@ bbbb = 200
 addAndDouble = f
 double = f
 resutl1 = uninitialized
+
+    add
+    arguments = [100, 200]
+    this = undefined
+    x = 100
+    y = 200
+    
+        double
+        arguments = [300]
+        this = undefined
+        x = 300
+*/
+
+//addAndDouble 호출되는 시점에 호출 컨텍스트에서는 double 함수를 찾을 수 없으므로 double을 호출하기 위해
+//전역 실행 컨텍스트를 참조 (즉, 호출된 함수 상위에 있는 실행 컨텍스트를 참조하며 검색)
+
+var p = 100;
+let q = 200;
+function aAd(x, y) { //100, 200 <<1>>
+    function d(x) { // 300 <<3>>
+        return 2 * x; // 600 <<4>>
+    }
+    return d(x + y); //100 + 200 = 300 <<2>>
+}
+let r = aAd(p, q);
+console.log(r)
+
+/*
+전역
+global = window
+this = window
+p = 100
+q = 200
+r = uninitialized
+aAd = f
+
+aAd 함수
+this = undefined
+arguments = [100, 200]
+x = 100
+y = 200
+
+d 함수
+arguments = [300]
+this = undefined
+x = 300
+*/
+
+
+
+// 클로저의 실행 컨텍스트
+// 함수 내부에서 함수를 반환할 경우 함수가 만들어진 상황을 기억하는 클로저 환경이 함수와 같이 반환
+// 함수가 생성되는 시점에 참조한 외부 변수 및 환경에 접근 가능
+
+let sum = 0;
+let y = 100;
+function makeAdder(init = 0) {
+    let sum = init;
+    return function(x) {
+        sum += x + y;
+        return sum;
+    }
+}
+let adder = makeAdder(sum);
+let result2 = adder(1); // 101
+// makeAdder의 반환값을 받는 adder에 반환 이름이 없으므로 adder를 호출하면 익명 함수 컨텍스트에서 실행
+//adder가 호출되는 시점에 클로저 컨텍스트와 함께 전달
+//adder 함수에서 찾을 수 없는 값 (sum, y)에 접근할 때 클로저 컨텍스트 참조
+
+//클로저 컨텍스트가 외부 실행 컨텍스트(전역)를 참조하기 때문에 클로저 컨텍스트에 존재하지 않는 y 값에도 접근 가능
+
+/*
+전역
+global = window
+this = window
+sum = 0
+y = 100
+makeAdder = f
+adder = f
+result2 = uninitialized
+
+makeAdder 클로저 컨텍스트
+    arguments = [0] // sum = 0
+    this = undefined
+    sum = 0;
+    init = 0
+
+익명 함수
+    arguments = [1]
+    this = undefined
+    x = 1
 */
