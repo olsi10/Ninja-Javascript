@@ -668,7 +668,10 @@ console.log(person.address.city); //New York
 
 //함수를 일급 객체 취급!!!
 
+<<<<<<< HEAD
 //코드 블록
 //중괄호 코드 블록으로 진입하면 새로운 접근 범위 scope 생성.
 //접근 범위 안에서 선언한 변수는 블록 안에서만 사용
 
+=======
+>>>>>>> 0134d08c8e11efeca96e98bc7de71eed8c959a8b
