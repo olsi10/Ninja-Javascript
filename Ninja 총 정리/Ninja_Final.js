@@ -89,9 +89,19 @@ let {gn : g = "FIFA", ...re} = game;
 console.log(g); console.log(re.age); console.log(re.device);
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Date 객체와 날짜
 //date = 날짜 저장 가능, 날짜 관련 메서드를 제공하는 내장 객체
@@ -209,3 +219,117 @@ let ms3 = new Date(ms2);
 console.log(ms3);
 
 //보통 Date 객체를 쓰기 보단 날짜 관련 라이브러리 momtnejs 사용
+
+
+
+
+
+
+
+
+
+
+// 실행 컨텍스트와 스택
+// 함수 실행 절차에 대한 정보는 함수의 실행 컨텍스트에 저장
+// 실행 컨텍스트는 함수 실행에 대한 세부 정보를 담고 있는 내부 데이터 구조
+// 제어 흐름의 현재 위치, 변수의 현재 값, this 값 등 상세 내부 정보가 실행 컨텍스트에 저장
+// 함수 호출 일회당 정하ㅗㄱ히 하나의 실행 컨텍스트가 생성
+
+// 함수 내부에서 함수의 중첩 호출이 있을 경우 아래와 같은 절차 수행
+
+// 전역 실행 컨텍스트
+// 스크립트가 시작되면 곧바로 전역 실행 컨텍스트 생성-> 실행
+// 특정 함수 안에서 실행되는 코드가 아니면 모두 전역 컨텍스트에서 실행
+// 전역 컨텍스트를 생성하는 시점에서 세 가지 작업 수행
+// 1. 전역 객체 생성 (브라우저 window, 노드 global)
+// 2. this를 전역 객체로 할당
+// 3. 사용할 값들(변수, 함수 등)을 위한 메모리 할당 및 초기화
+
+/*
+<script>
+script 내부는 비었지만 어쨌든 전역 실행 컨텍스트가 생성되고 실행 단계로 진입
+내용은 없지만 1, 2의 작업이 수행되었으므로 다음과 같이 this 값 및 전역 객체 확인이 가능
+(사용할 값들이 없으면 3의 작업 결과는 없음)
+</script>
+*/
+
+console.log(this);
+console.log(window);
+
+//실행 컨텍스트의 경우 항상 두 가지 단계를 거침
+// 생성 단계
+//      코드를 본격적으로 시작하기 전 실행할 코드를 분석하여 초기 컨텍스트 단계
+// 실행 단계
+//      코드를 한 줄씩 실행하며 컨텍스트 내용 수정하는 단계
+
+var aa = 100;
+let bb = 200;
+
+function f() {
+    console.log('hello');
+}
+aa = 300;
+bb = 400;
+
+/*
+global = window
+this = window
+
+aa = undefined
+bb = uninitialized
+
+f = f() { console.log('hello'); }
+*/
+
+// 함수 실행 컨텍스트
+// 새로운 함수가 실행될 때마다 매번 새로운 함수 실행 컨텍스트가 생성 단계로 진입하여 생성, 이후 실행
+
+var aaa = 100;
+let bbb = 200;
+function add(x, y) {
+    console.log(arguments);
+    return x + y;
+}
+let reuslt = add(a, b);
+
+/* 생성 컨텍스트
+aaa = undefined
+bbb = uninitialized
+result = uninitialized
+add = add(x, y) {
+    console.log(arguments);
+    return x + y;
+}
+ */
+
+// 전역 객체 대신 접근할 수 있는 arguments 유사 배열 생성
+// arguments에는 전달된 인자값들이 모두 저장
+
+/* add 함수의 실행 컨텍스트
+arguments = [100, 200]
+this = undefined (엄격모드로 가정)
+x = 100
+y = 200
+*/
+
+// 함수 실행 컨텍스트는 함수 실행이 종료되는 시점에 반환값을 반환하며 사라지게 됨
+
+var aaaa = 100;
+let bbbb = 200;
+function addAndDouble(x, y) {
+    return double(x + y);
+}
+function double(x) {
+    return 2 * x;
+}
+let reuslt1 = addAndDouble(a, b);
+
+/*
+global = window
+this = window
+aaaa = 100
+bbbb = 200
+addAndDouble = f
+double = f
+resutl1 = uninitialized
+*/
