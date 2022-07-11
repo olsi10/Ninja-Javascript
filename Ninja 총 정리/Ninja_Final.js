@@ -590,3 +590,85 @@ let merged = [1, ...arrr3, 2, ...arrr4];
 
 console.log(merged); //1, Hello, 1234, 2, 5678, World
 
+
+
+
+//배열, 객체 복사
+//전개문법으로 배열, 객체 내용 복사 가능
+//객체 불변성을 이용하는 라이브러리에서 사용
+
+//배열 복사//
+let arrrr = [1,2,3];
+let arrrrCopy = [...arrrr];
+
+//let arrrrCopy = Object.assign([], arrrr)과 같은 역할
+
+//똑같은 내용
+console.log(JSON.stringify(arrrr) === JSON.stringify(arrrrCopy)); //true
+
+//같은 참조 X, 각각 다른 배열임
+console.log(arrrr === arrrrCopy); //false
+
+arrrr.push(4);
+console.log(arrrr);
+console.log(arrrrCopy);
+
+
+//객체 복사//
+
+let obj = {a : 1, b : 2, c : 3};
+let objCopy = {...obj};
+
+console.log(JSON.stringify(obj) === JSON.stringify(objCopy)); //ture
+console.log(obj === objCopy); //false
+
+obj.d = 4; //d 추가
+console.log(JSON.stringify(obj));
+console.log(JSON.stringify(objCopy));
+
+
+////그러나!!!!!!! 객체내부에 중첩 객체가 있는 경우 주의.
+
+let person = {
+    name : "John",
+    address : {
+        city : "Seoul",
+        postal : '01234'
+    }
+};
+
+let personCopy1 = {...person};
+personCopy1.name = "Jane";
+console.log(person.name); //John
+console.log(personCopy1.name); //Jane
+
+personCopy1.address.city = "New York";
+console.log(person.address.city); //New York;//내부 객체 접근 시 원본 객체도 영향
+console.log(personCopy1.address.city); // New york
+
+//중첩된 객체복사
+//personCopy2도 새로운 객체, 내부 객체 address도 새로운 객체로 복사
+let personCopy2 = {...person, address : {...person.address}};
+personCopy2.address.city = "Tokyo";
+console.log(personCopy2.address.city); //Tokyo
+console.log(person.address.city); //New York
+
+
+
+
+
+
+//변수의 유효범위와 클로저'
+
+//자바스크립트는 객체 지향이면서 함수 지향 언어 특징을 가짐
+//함수 동적 생성 가능
+//생성한 함수를 값처럼 다른 함수에 인수로 넘길 수 있다.
+//함수가 생성된 곳이 아니어도 함수 호출 가능.
+//반환된 함수를 호출 가능 (클로저)
+
+//함수를 일급 객체 취급!!!
+
+//코드 블록
+//중괄호 코드 블록으로 진입하면 새로운 접근 범위 scope 생성.
+//접근 범위 안에서 선언한 변수는 블록 안에서만 사용
+
