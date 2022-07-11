@@ -754,3 +754,250 @@ let counter = makeCount();
 console.log(counter()); //0
 console.log(counter()); //1
 console.log(counter()); //2
+
+
+
+
+
+
+
+//렉시컬 환경
+//렉시컬 환경은 어떠한 코드가 어디서 실행이 되고
+//본인 주변에 어떤 코드들이 있는지 대체적인 정보를 담고 있는 환경
+
+//1. 변수
+//  실행 중인 함수, 임의의 중괄호 코드블록, 스크립트 전체는
+//  렉시컬 환경 객체라 불리는 숨김 객체를 가짐
+//  환경 레코드 : 모든 지역 변수를 프로퍼티로 저장하고 있는 객체
+//  외부 렉시컬 환경 : 이 참조를 통해 외부 코드와 연결 가능
+//  => 자신한테 없으면 외부로 간다!!
+//  전역 렉시컬에서는 외부 참조를 안 가짐 null 할당
+
+//전역 렉시컬, 외부 렉시컬 환경 (null)에 접근 불가
+// console.log(this); //window
+
+// {
+//     //외부 렉시컬 환경 접근 가능
+// }
+
+// function f() {
+//     //외부 렉시컬 환경 접근 가능
+// }
+// f();
+
+
+
+
+
+//전역 객체
+//alert, prompt, confirm 등 빌트인 함수들은 모두 글로벌 객체 전역 함수
+
+// alert("Hello");
+// // 위와 동일하게 동작합니다.
+// window.alert("Hello");
+
+//모든 스크립트에서 현재 사용자 current user에 접근할 수 있도록 전역 객체에 프로퍼티 추가
+// window.currentUser = {
+//     name : "John"
+// };
+
+// console.log(currentUser.name); //john
+
+// //지역 변수 currentUser가 있다면 충돌없이 전역 객체에서 이를 가져올 수 있음
+// console.log(window.currentUser.name); //John
+
+//되도록이면 지역 함수는 모르겠고 지역 변수는 사용 XXX
+//가급적 함수를 만들 땐 전달받은 입력값만으로 값을 반환해야 테스트, 재사용 쉬움
+
+
+
+
+//setTimeout setInterval 호출 스케줄링
+//setTimeout은 특정 시간 이후에 함수 실행
+//setInterval은 특정 시간동안 함수 반복
+
+// function sayHi() {
+//     console.log("안녕하세[요.");
+// }
+
+// setTimeoutI(sayHi, 1000);
+
+// function sayHi2(who, phrase) {
+//     console.log(who  + "님, " + phrase);
+// }
+
+// setTimeout(sayHi2, 1000, "홍길동", "안녕하세요");
+
+// //익명함수 형식도 가능!
+// setTimeout(function() {
+//     sayHi2("홍길동", "안녕하세요.");
+// }, 1000);
+
+//clearTimeout 으로 스케줄링 취소
+
+
+
+//setInterval
+
+let timeId = setInterval(() => console.log("째깍"), 2000); //2초간 실행
+setTimeout(() => {
+    clearInterval(timeId);
+}, 6000); //6초 후 종료
+
+
+
+//call, apply
+
+//call은 this값 지정하고 싶을 때
+//call 첫번째 인자값 this, 나머지 매개변수 ...점세개연산자
+
+function printThis() {
+    console.log(this);
+}
+
+let person1 = {name : "John", age : 20};
+let dog = {name : "Sam", age : 5};
+
+printThis.call(person); //this값이 person
+printThis.call(dog); //this값이 dog
+
+function printName(pre, times = 1) {
+    console.log(this);
+    for (let i = 0; i < times; i++) {
+        console.log(pre, this.name);
+    }
+}
+
+printName.call(person, "Hello", 2);
+printName.call(dog, "Good");
+
+
+//apply 메서드
+//call과 같지만 전달방식이 다름
+
+function printThis2() {
+    console.log(this);
+}
+
+let person2 = {name : "John", age : 20};
+let dog2 = {name : "Sam", age : 5};
+
+printThis2.apply(person); //this가 person
+printThis2.apply(dog); //this가 dog
+
+function printName2(pre, times = 1) {
+    console.log(this);
+    for(let i = 0; i < times; i++) {
+        console.log(pre, this.name);
+    }
+}
+
+//가변인자가 아닌 인자가 담긴 배열로 전달
+printName2.apply(person, ["Hello", 2]);
+printName2.apply(dog, ["Good"]);
+
+//굳이 배열을 ㅡㅆ면서 call을 써야한다면 ...을 써서 가변인자로 만들어주기
+printName.call(person, ...["Hello", 2]);
+
+
+//함수 바인딩
+//객체 메서드가 다른 곳에 전달되며 this값이 사라지는 현상
+
+let us = {
+    me : "Jone",
+    sayHi() {
+        console.log(`Hello ${this.me}!`);
+    }
+};
+
+us.sayHi(); //Hello Jone!
+
+setTimeout(us.sayHi, 1000); //Hello, undefined
+
+
+//방법 1 래퍼
+
+let us1 = {
+    me2 : "Jone",
+    sayHi() {
+        console.log(`Hello ${this.me}!`);
+    }
+};
+
+setTimeout(function () {
+    //주체가 있는 상태에서 this 보존
+    us1.sayHi();
+}, 1000); 
+
+
+
+//방법2. 바인드
+//모든 함수는 this를 수정하게 하는 bind 메섣 ㅡ제공
+
+let us3 = {me : "john"};
+
+function func() {
+    console.log(this.me);
+}
+
+let funcUser = func.bind(user); //func의 this를 us로 바인딩
+
+funcUser();
+
+
+///프로토타입
+
+// let oo = {};
+
+// console.log(oo.__proto__);
+// console.log(Object.getPrototypeOf(oo));
+// console.log(oo.__proto__ === Object.getPrototypeOf(oo));
+
+
+// //프로토타입 체인을 따라서 검색
+
+// let zoo = {
+//     isZoo : true,
+//     eat : function(food) {
+//         console.log(`${food}를 먹습니다.`);
+//     }
+// };
+
+// let tiger = {
+//     bark : function() {
+//         console.log("어흥");
+//     }
+// };
+
+// let cat = {
+//     meow : function() {
+//         console.log("야옹");
+//     }
+// };
+
+
+// tiger.__proto__ = zoo;
+// Object.setPrototypeOf(tiger, cat);
+
+
+// //당연히 접근 가능
+// tiger.bark();
+// cat.meow();
+
+// console.log(tiger.isZoo);
+// console.log(cat.isZoo);
+
+// tiger.eat("사료");
+// cat.eat("고급 사료");
+
+// console.log(tiger.asdf); //undefined
+
+// 프로토타입 체인을 검색하는 과정에서 가장 먼저 만나게 된 속성, 메서드에 접근함
+// 자바의 메서드 오버라이드와 비슷한 방식이라고 생각해도 무방함
+
+function hel() {};
+
+let world = function() {};
+
+console.log(hel.prototype);
+console.log(hel.prototype.constructor === hel); //true
