@@ -663,15 +663,94 @@ console.log(person.address.city); //New York
 //자바스크립트는 객체 지향이면서 함수 지향 언어 특징을 가짐
 //함수 동적 생성 가능
 //생성한 함수를 값처럼 다른 함수에 인수로 넘길 수 있다.
-//함수가 생성된 곳이 아니어도 함수 호출 가능.
-//반환된 함수를 호출 가능 (클로저)
+//함수가 생성된 곳이 아니어도 함수 호출 가능. 반환된 함수를 호출 가능 (클로저)
 
 //함수를 일급 객체 취급!!!
 
-<<<<<<< HEAD
 //코드 블록
 //중괄호 코드 블록으로 진입하면 새로운 접근 범위 scope 생성.
 //접근 범위 안에서 선언한 변수는 블록 안에서만 사용
 
-=======
->>>>>>> 0134d08c8e11efeca96e98bc7de71eed8c959a8b
+{
+    let msg = "Hello";
+    console.log(msg);
+}
+
+//console.log(msg); //nnono
+
+let msgg;
+{
+    msgg = "Hello"; //지역 변수 선언 X 바깐 msgg 참조
+    console.log(msgg);
+}
+console.log(msgg);
+
+//이미 선언된 변수를 중괄호 없이 let으로 선언하면 에러
+
+let msg1 = "hi";
+console.log(msg1);
+
+//let msg1 = "bye"; Error
+
+//다음은 잘 작동
+
+let msg2 = "Hi!";
+{
+    let msg2 = "Hi!"; //바깥 변수 이름을 지역변수가 가리는 쉐도잉 현상
+    console.log(msg2); //안녕하세요.
+}
+
+{
+    let msg2 = "Bye!";
+    console.log(msg2);
+}
+
+console.log(msg2); //Hi!
+
+
+//if for while 같은 제어문의 중괄호 블록 안에서 선언한 변수는 오직 변수 속에서 접근
+
+if(true)
+{
+    let phrase = "Hi!";
+    console.log(phrase);
+}
+
+//console.log(phrase); Error
+
+for(let i = 0; i < 3; i++) //i 지역변수 ㅡ,,ㅡ!
+{
+    console.log(i);
+}
+
+//console.log(i); Error!
+
+function makeObjectWithClosureMethod(value) {
+    let x = 100;
+    let obj = {
+    method(arg) {
+    // 메서드 형태이지만, 함수와 똑같이 메서드가 정의된 시점의 바깥 환경을 기억 가능
+        console.log(value, x, arg);
+    }
+    };
+    return obj;
+    }
+    let ob = makeObjectWithClosureMethod("Hello");
+    ob.method("World");
+
+
+
+function makeCount() {
+    let count = 0;
+    //함수는 본인이 정의된 시점에서 바깥 환경을 기억함
+    return function() {
+        //반환 후에도 호출되어 외부 영역 값도 접근 가능 (클로저)
+        return count++;
+    };
+}
+
+let counter = makeCount();
+
+console.log(counter()); //0
+console.log(counter()); //1
+console.log(counter()); //2
